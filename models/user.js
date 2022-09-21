@@ -1,4 +1,4 @@
-const { schema, model, Schema } = require('mongoose')
+const { model, Schema } = require('mongoose')
 
 const UserSchema = Schema({
     name: {
@@ -20,7 +20,7 @@ const UserSchema = Schema({
     role: {
         type: String,
         required: [true, 'Role is required'],
-        enum: ['ADMI', 'USER', 'SELLER']
+        enum: ['ADMIN', 'USER', 'SELLER']
     },
     status: {
         type: Boolean,
@@ -33,7 +33,8 @@ const UserSchema = Schema({
 })
 
 UserSchema.methods.toJSON = function () {
-    const { __v, password, ...user } = this.toObject()
+    const { __v, password, _id, ...user } = this.toObject()
+    user.uid = _id                                  // cambio el id por uid
     return user
 }
 
