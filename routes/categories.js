@@ -1,23 +1,21 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
-const { allCategories, createCategory, idCategory, updateCategory, deleteCategory } = require('../controllers/categories')
-const { validateJwt, validateFields, isRoleAdm } = require('../middleware')
-const { existCategoryByID } = require('../helpers/db-validators')
+const { createCategory } = require('../controllers/categories')
+const { validateJwt, validateFields } = require('../middleware')
+
 const router = Router()
 
 // Rutas publicas
 
-// Para las rutas con id  el middleware check('id).custom(existeCategoria)
+router.get('/', (req, res) => {
+    res.send({ msg: 'todo ok en categoria' })
+    console.log('Ok!!!!!!')
+})
 
-router.get('/', allCategories)
-
-
-router.get('/:id', [
-    check('id', 'Is not a mongo id').isMongoId(),
-    check('id').custom(existCategoryByID),
-    validateFields,
-], idCategory)
-
+router.get('/:id', (req, res) => {
+    res.send({ msg: 'todo ok en categoria' })
+    console.log('Ok!!!!!!')
+})
 
 // Privados- con token valido
 router.post('/', [
@@ -27,23 +25,14 @@ router.post('/', [
     createCategory])
 
 
-router.put('/:id', [
-    validateJwt,
-    check('name', 'Name is required').not().isEmpty(),
-    check('id', 'Is not a mongo id').isMongoId(),
-    check('id').custom(existCategoryByID),
-    validateFields
-], updateCategory)
-
-
-
+router.put('/:id', (req, res) => {
+    res.send({ msg: 'todo ok en categoria' })
+    console.log('put!!!!!!')
+})
 // solo adminustrador y marcar por estado
-router.delete('/:id', [
-    validateJwt,
-    isRoleAdm,
-    check('id', 'Is not a mongo id').isMongoId(),
-    check('id').custom(existCategoryByID),
-    validateFields
-], deleteCategory)
+router.delete('/', (req, res) => {
+    res.send({ msg: 'todo ok en categoria' })
+    console.log('Ok!!!!!!')
+})
 
 module.exports = router
