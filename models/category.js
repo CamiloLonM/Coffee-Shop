@@ -15,13 +15,8 @@ const CategorySchema = Schema({
         type: Schema.Types.ObjectId,            //La relación
         ref: 'User',
         required: true
+
     }
 })
-
-CategorySchema.methods.toJSON = function () {
-    const { __v, status, ...data } = this.toObject()  // lo que No retorno,
-    return data
-}
-
 
 module.exports = model('Category', CategorySchema)
