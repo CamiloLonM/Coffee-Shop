@@ -9,9 +9,11 @@ const allowedCollections = [
     'users'
 ];
 
+// Busquedas insencible (Callous search)
+
 const searchCategory = async (term = '', res) => {
-    //const isMongoID = ObjectId.isValid
-    const isMongoID = ObjectId.isValid(term); // True
+
+    const isMongoID = ObjectId.isValid(term)
     if (isMongoID) {
         const category = await Category.findById(term)
         return res.json({
@@ -26,7 +28,8 @@ const searchCategory = async (term = '', res) => {
 }
 
 const searchProducts = async (term = '', res) => {
-    const isMongoID = ObjectId.isValid(term);
+
+    const isMongoID = ObjectId.isValid(term)
     if (isMongoID) {
         const product = await Product.findById(term)
             .populate('category', 'name')
@@ -44,7 +47,7 @@ const searchProducts = async (term = '', res) => {
 
 const searchUsers = async (term = '', res) => {
 
-    const isMongoID = ObjectId.isValid(term); // True
+    const isMongoID = ObjectId.isValid(term) // True
     if (isMongoID) {
         const user = await User.findById(term)
         return res.json({
@@ -63,14 +66,12 @@ const searchUsers = async (term = '', res) => {
     })
 }
 
-
 const search = (req, res) => {
-    const { collection, term } = req.params
 
+    const { collection, term } = req.params
     if (!allowedCollections.includes(collection)) {
         return res.status(400).json({
             msg: `The allowed collections are: ${allowedCollections}`
-
         })
     }
     switch (collection) {
@@ -86,7 +87,6 @@ const search = (req, res) => {
 
         default:
             res.status(500).json({ msg: 'You forgot to perform this search' })
-
     }
 }
 
