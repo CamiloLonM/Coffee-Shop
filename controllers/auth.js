@@ -46,7 +46,7 @@ const googleSignIn = async (req, res = response) => {
                 img,
                 google: true
             }
-            const user = new User(data)
+            user = new User(data)
             await user.save()
         }
         // Si el user esta inactivo en DB
