@@ -1,3 +1,4 @@
+const { MAX_ACCESS_BOUNDARY_RULES_COUNT } = require('google-auth-library/build/src/auth/downscopedclient')
 const { Role, User, Category, Product } = require('../models')
 
 
@@ -6,6 +7,7 @@ const validRole = async (role = '') => {
     if (!roleExists) {
         throw new Error(`Role ${role} is invalid in DB`)
     }
+    return true
 }
 
 const existsEmail = async (email = '') => {
@@ -14,6 +16,7 @@ const existsEmail = async (email = '') => {
     if (emailExists) {
         throw new Error(`This email ${email}, already registered`)
     }
+    return true
 }
 
 const existUserById = async (id) => {
@@ -21,23 +24,35 @@ const existUserById = async (id) => {
     if (!userById) {
         throw new Error(`User id ${id} not exist`)
     }
+    return true
 }
 
-/* Validadores Category */
+// Validadores Category 
 
 const existCategoryByID = async (id) => {
     const categoryById = await Category.findById(id)
     if (!categoryById) {
         throw new Error(`Category id ${id} not exist`)
     }
+    return true
 }
 
-/* Validadores producto */
+// Validadores producto 
 const existProductById = async (id) => {
     const productById = await Product.findById(id)
     if (!productById) {
         throw new Error(`Product id ${id} not exist`)
     }
+    return true
+}
+
+// Colecciones Permitidas
+const allowedCollection = async (collection = '', collections = []) => {
+    const included = await collections.includes(collection)
+    if (!included) {
+        throw new Error(`Collection ${collection} is not allowed`)
+    }
+    return true
 }
 
 
@@ -46,5 +61,6 @@ module.exports = {
     existsEmail,
     existUserById,
     existCategoryByID,
-    existProductById
+    existProductById,
+    allowedCollection
 }
