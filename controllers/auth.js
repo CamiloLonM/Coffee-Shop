@@ -35,7 +35,7 @@ const login = async (req, res) => {
 const googleSignIn = async (req, res = response) => {
     const { id_token } = req.body;
     try {
-        const { email, name, img } = await googleVerify(id_token)
+        const { email, name, image } = await googleVerify(id_token)
         let user = await User.findOne({ email })
         if (!user) {
             //tengo que crearlo si no existe
@@ -43,7 +43,7 @@ const googleSignIn = async (req, res = response) => {
                 name,
                 email,
                 password: '@',
-                img,
+                image,
                 google: true
             }
             user = new User(data)

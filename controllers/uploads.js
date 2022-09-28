@@ -1,31 +1,59 @@
-const path = require('path')  // metodo u objeto poder crear urls
-const { v4: uuidv4 } = require('uuid')    // Identificadores unicos
+const { model } = require('mongoose');
+const { uploadFile } = require('../helpers')
+const { User, Product } = require('../models')
 
-const uploadFile = (req, res) => {
+const fileUpload = async (req, res) => {
+    try {
+        //Imagen
+        /* const fullFile = await uploadFile(req.files)
+        res.json({
+            path: fullFile
+        }) */
+        //text,md
+        //  const name = await uploadFile(req.files, ['txt', 'md'], 'text')   'Text' directoria que se crea en el upload - hay se cargan los archivos 
 
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
-        res.status(400).json({ msg: 'No files were uploaded.' });
-        return;
+        //Subir el archivo
+        const name = await uploadFile(req.files, undefined, 'imgs')
+        res.json({ name })
+    } catch (msg) {
+        res.status(400).json({ msg })
     }
-    const { file } = req.files
-    const cutName = file.name.split('.')
-    const extent = cutName[cutName.length - 1]              //Extension del archivo
-    //valido extension
-    const validExtensions = ['.png', '.jpg', '.jpeg', '.gif']
-    if (validExtensions.includes(extent))
-        return res.status(400).json({
-            msg: `Extension ${extent} is not allowed, ${validExtensions}`
-        })
-
-    // Renombrar archivo y moverlo a ubicacion deseada
-    const tempFileName = uuidv4() + '.' + extent
-    const uploadPath = path.join(__dirname, '../uploads/', tempFileName)
-    file.mv(uploadPath, (err) => {
-        if (err) {
-            return res.status(500).json({ err });
-        }
-        res.json({ msg: 'File uploaded to ' + uploadPath });
-    });
 }
 
-module.exports = { uploadFile }
+const imageUpdate = async (req, res) => {
+
+    const { id, collection } = req.params
+    let model
+    switch (collection) {
+        case 'users':
+            model = await User.findById(id)
+            if (!model) {
+                return res.status(400).json({
+                    msg: `The user with that id ${id} does not exist`
+                })
+            }
+            break;
+        case 'products':
+            model = await Product.findById(id)
+            if (!model) {
+                return res.status(400).json({
+                    msg: `The product with that id ${id} does not exist`
+                })
+            }
+            break;
+
+        default:
+            return res.status(500).json({ msg: 'Need to validate this' })
+    }
+    const name = await uploadFile(req.files, undefined, collection)
+    model.image = name
+
+    await model.save()
+
+    res.json(model)
+}
+
+module.exports = {
+    fileUpload,
+    imageUpdate
+}

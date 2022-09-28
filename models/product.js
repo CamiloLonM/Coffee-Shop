@@ -33,6 +33,9 @@ const ProductSchema = Schema({
     availability: {
         type: Boolean,
         default: true
+    },
+    image: {
+        type: String
     }
 })
 
