@@ -6,7 +6,7 @@ Coffee shop project.
 
 **Technologies**
 ------------------------
-
+- HTML
 - NodeJs
 - ExpressJs
 - MongoDB
