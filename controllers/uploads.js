@@ -1,4 +1,5 @@
-const { model } = require('mongoose');
+const path = require('path')
+const fs = require('fs')            // file system  node
 const { uploadFile } = require('../helpers')
 const { User, Product } = require('../models')
 
@@ -24,6 +25,7 @@ const imageUpdate = async (req, res) => {
 
     const { id, collection } = req.params
     let model
+
     switch (collection) {
         case 'users':
             model = await User.findById(id)
@@ -45,6 +47,15 @@ const imageUpdate = async (req, res) => {
         default:
             return res.status(500).json({ msg: 'Need to validate this' })
     }
+    // Limpieza de carga imagenes
+    if (model.image) {
+        // Borrar la imagen del server
+        const pathImage = path.join(__dirname, '../uploads', collection, model.image)
+        if (fs.existsSync(pathImage)) {
+            fs.unlinkSync(pathImage)
+        }
+    }
+
     const name = await uploadFile(req.files, undefined, collection)
     model.image = name
 
