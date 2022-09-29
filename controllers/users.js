@@ -1,5 +1,6 @@
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
+const { encryptPassword } = require("../helpers/password");
 
 const userGet = async (req, res) => {
   const { limit = 5, since = 0 } = req.query;
@@ -18,8 +19,8 @@ const userPost = async (req, res) => {
   const { name, email, password, role } = req.body;
   const user = new User({ name, email, password, role });
   // Encriptar password
-  const salt = bcryptjs.genSaltSync();
-  user.password = bcryptjs.hashSync(password, salt);
+
+  user.password = encryptPassword(password);
   // Guardar en DB
   await user.save();
   res.json({
@@ -29,11 +30,7 @@ const userPost = async (req, res) => {
 
 const userPut = async (req, res) => {
   const { id } = req.params;
-  const { _id, password, google, email, ...rest } = req.body;
-  if (password) {
-    const salt = bcryptjs.genSaltSync();
-    rest.password = bcryptjs.hashSync(password, salt);
-  }
+  const { _id, google, email, ...rest } = req.body;
   const userDB = await User.findByIdAndUpdate(id, rest);
   res.json({
     userDB,
